@@ -104,7 +104,7 @@ body {
     color: #a2a2be;
 }
 
-.current-temperature-current-temperature {
+.current-temperature__current-temperature {
     font-size: 24px;
     font-weight: 500;
     margin-top: 10px;
@@ -136,7 +136,7 @@ body {
     border: none;
 }
 
-.temperature-details__lable {
+.temperature-details__label {
     color: #a2a2be;
 }
 

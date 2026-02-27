@@ -21,6 +21,12 @@ citySearchButton.addEventListener('click', () => {
     getCityWeather(cityName);
 })
 
+citySearchInput.addEventListener('keydown', (e) => {
+    if (e.key === 'Enter') {
+        getCityWeather(citySearchInput.value);
+    }
+});
+
 //https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=pt_br&appid=${api_key}`
 
 // localização usuário
@@ -42,20 +48,42 @@ navigator.geolocation.getCurrentPosition(
 )
 //carrrega a temperatura localização automatica
 function getCurrentLocationWeather(lat, lon) {
+    weatherIcon.src = `./_img/assets/loading-icon.svg`;
     fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=pt_br&appid=${api_key}`)
         .then((response) => response.json())
-        .then((data) => displayWeather(data))
-}
+        .then((data) => {
+            if (data.cod && Number(data.cod) !== 200) {
+                throw new Error(data.message || 'Erro ao obter localização');
+            }
+            displayWeather(data);
+        })
+        .catch((err) => {
+            console.error(err);
+        });
+} 
 
 //dados API
 function getCityWeather(cityName) {
+    const city = (cityName || '').trim();
+    if (!city) {
+        alert("Por favor, digite o nome de uma cidade.");
+        return;
+    }
 
-    weatherIcon.src = `./assets/loading-icon.svg`
+    weatherIcon.src = `./_img/assets/loading-icon.svg`;
 
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${cityName}&units=metric&lang=pt_br&appid=${api_key}`)
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=pt_br&appid=${api_key}`)
         .then((response) => response.json())
-        .then((data) => displayWeather(data))
-}
+        .then((data) => {
+            if (data.cod && Number(data.cod) !== 200) {
+                throw new Error(data.message || 'Cidade não encontrada');
+            }
+            displayWeather(data);
+        })
+        .catch((err) => {
+            alert(`Erro: ${err.message}`);
+        });
+} 
 // dados patra impressão
 function displayWeather(data) {
     let { dt,
@@ -86,7 +114,7 @@ function formatDate(epochTime) {
 //formatação por/ nascer do sol
 function formatTime(epochTime) {
     let date = new Date(epochTime * 1000);
-    let hours = date.getHours();
-    let minutes = date.getMinutes();
+    let hours = String(date.getHours()).padStart(2, '0');
+    let minutes = String(date.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
 }

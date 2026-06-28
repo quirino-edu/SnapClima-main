@@ -30,26 +30,29 @@ citySearchInput.addEventListener('keydown', (e) => {
 //https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=pt_br&appid=${api_key}`
 
 // localização usuário
-navigator.geolocation.getCurrentPosition(
-    (position) => {
-        //recebe a lozalização automatica
-        const lat = position.coords.latitude
-        const lon = position.coords.longitude
-        getCurrentLocationWeather(lat, lon)
-    },
-    //erro ao carregar localização
-    (error) => {
-        if (error.code === 1) {
-            alert("Geolocalização negada pelo usuário, permita a localização!");
-        } else {
-            alert(`error! ` + " Erro não identificado");
+if (!('geolocation' in navigator)) {
+    console.warn('Geolocalização não suportada neste navegador.');
+} else {
+    navigator.geolocation.getCurrentPosition(
+        (position) => {
+            const lat = position.coords.latitude;
+            const lon = position.coords.longitude;
+            getCurrentLocationWeather(lat, lon);
+        },
+        (error) => {
+            if (error.code === 1) {
+                console.info('Geolocalização negada. Você pode buscar por uma cidade manualmente.');
+            } else {
+                console.error('Erro ao obter localização:', error.message);
+            }
         }
-    }
-)
+    );
+}
+
 //carrrega a temperatura localização automatica
 function getCurrentLocationWeather(lat, lon) {
     weatherIcon.src = `./_img/assets/loading-icon.svg`;
-    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=pt_br&appid=${api_key}`)
+    fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=pt&appid=${api_key}`)
         .then((response) => response.json())
         .then((data) => {
             if (data.cod && Number(data.cod) !== 200) {
@@ -72,7 +75,7 @@ function getCityWeather(cityName) {
 
     weatherIcon.src = `./_img/assets/loading-icon.svg`;
 
-    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=pt_br&appid=${api_key}`)
+    fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=pt&appid=${api_key}`)
         .then((response) => response.json())
         .then((data) => {
             if (data.cod && Number(data.cod) !== 200) {
@@ -97,7 +100,7 @@ function displayWeather(data) {
     currentDate.textContent = formatDate(dt);
     currentName.textContent = name;
     weatherIcon.src = `./_img/assets/${icon}.svg`;
-    weatherDescription.textContent = description;
+    weatherDescription.textContent = description || 'Tempo atual';
     currentTemperature.textContent = `${Math.round(temp)}°C`;
     windSpeed.textContent = `${Math.round(speed * 3.6)}km/h`;
     feelsLikeTemperature.textContent = `${Math.round(feels_like)}°C`;

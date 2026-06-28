@@ -2,7 +2,7 @@
 
 ## Project overview
 
-SnapClima is a small static web application built with plain HTML, CSS, and JavaScript.
+SnapClimb is a small static web application built with plain HTML, CSS, and JavaScript.
 It fetches current weather data from the OpenWeatherMap API and displays it in Portuguese (pt-BR).
 
 ## Key files

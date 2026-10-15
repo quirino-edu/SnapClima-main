@@ -15,23 +15,35 @@ const sunsetTime = document.querySelector('#sunset-time');
 
 const api_key = "5441a76833c304a059fb6cd4f9f73638";
 
+const loadingState = () => {
+    weatherIcon.src = './_img/assets/loading-icon.svg';
+    currentDate.textContent = 'Carregando...';
+    currentName.textContent = 'Aguarde';
+    weatherDescription.textContent = 'Buscando clima';
+    currentTemperature.textContent = '...';
+    windSpeed.textContent = '...';
+    feelsLikeTemperature.textContent = '...';
+    currentHumidity.textContent = '...';
+    sunriseTime.textContent = '...';
+    sunsetTime.textContent = '...';
+};
+
 //condição de click no botão
 citySearchButton.addEventListener('click', () => {
-    let cityName = citySearchInput.value;
+    const cityName = citySearchInput.value;
     getCityWeather(cityName);
-})
+});
 
-citySearchInput.addEventListener('keydown', (e) => {
-    if (e.key === 'Enter') {
+citySearchInput.addEventListener('keydown', (event) => {
+    if (event.key === 'Enter') {
         getCityWeather(citySearchInput.value);
     }
 });
 
-//https://api.openweathermap.org/data/2.5/weather?q=${city}&units=metric&lang=pt_br&appid=${api_key}`
-
 // localização usuário
 if (!('geolocation' in navigator)) {
     console.warn('Geolocalização não suportada neste navegador.');
+    loadingState();
 } else {
     navigator.geolocation.getCurrentPosition(
         (position) => {
@@ -45,15 +57,24 @@ if (!('geolocation' in navigator)) {
             } else {
                 console.error('Erro ao obter localização:', error.message);
             }
+
+            currentName.textContent = 'Busque por uma cidade';
+            weatherDescription.textContent = 'Geolocalização indisponível';
         }
     );
 }
 
 //carrrega a temperatura localização automatica
 function getCurrentLocationWeather(lat, lon) {
-    weatherIcon.src = `./_img/assets/loading-icon.svg`;
+    loadingState();
+
     fetch(`https://api.openweathermap.org/data/2.5/weather?lat=${lat}&lon=${lon}&units=metric&lang=pt&appid=${api_key}`)
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Não foi possível carregar a localização atual.');
+            }
+            return response.json();
+        })
         .then((data) => {
             if (data.cod && Number(data.cod) !== 200) {
                 throw new Error(data.message || 'Erro ao obter localização');
@@ -62,21 +83,27 @@ function getCurrentLocationWeather(lat, lon) {
         })
         .catch((err) => {
             console.error(err);
+            alert('Não foi possível carregar o clima da sua localização. Tente buscar por uma cidade.');
         });
-} 
+}
 
 //dados API
 function getCityWeather(cityName) {
     const city = (cityName || '').trim();
     if (!city) {
-        alert("Por favor, digite o nome de uma cidade.");
+        alert('Por favor, digite o nome de uma cidade.');
         return;
     }
 
-    weatherIcon.src = `./_img/assets/loading-icon.svg`;
+    loadingState();
 
     fetch(`https://api.openweathermap.org/data/2.5/weather?q=${encodeURIComponent(city)}&units=metric&lang=pt&appid=${api_key}`)
-        .then((response) => response.json())
+        .then((response) => {
+            if (!response.ok) {
+                throw new Error('Cidade não encontrada');
+            }
+            return response.json();
+        })
         .then((data) => {
             if (data.cod && Number(data.cod) !== 200) {
                 throw new Error(data.message || 'Cidade não encontrada');
@@ -86,15 +113,18 @@ function getCityWeather(cityName) {
         .catch((err) => {
             alert(`Erro: ${err.message}`);
         });
-} 
-// dados patra impressão
+}
+
+// dados para impressão
 function displayWeather(data) {
-    let { dt,
+    const {
+        dt,
         name,
         weather: [{ icon, description }],
         main: { temp, feels_like, humidity },
         wind: { speed },
-        sys: { sunrise, sunset } } = data
+        sys: { sunrise, sunset }
+    } = data;
 
     //informações para aparecer
     currentDate.textContent = formatDate(dt);
@@ -108,16 +138,18 @@ function displayWeather(data) {
     sunriseTime.textContent = formatTime(sunrise);
     sunsetTime.textContent = formatTime(sunset);
 }
+
 //formatação data
 function formatDate(epochTime) {
-    let date = new Date(epochTime * 1000)
-    let formattedDate = date.toLocaleDateString('pt-BR', { month: "long", day: 'numeric' })
-    return `Hoje, ${formattedDate}`
+    const date = new Date(epochTime * 1000);
+    const formattedDate = date.toLocaleDateString('pt-BR', { month: 'long', day: 'numeric' });
+    return `Hoje, ${formattedDate}`;
 }
+
 //formatação por/ nascer do sol
 function formatTime(epochTime) {
-    let date = new Date(epochTime * 1000);
-    let hours = String(date.getHours()).padStart(2, '0');
-    let minutes = String(date.getMinutes()).padStart(2, '0');
+    const date = new Date(epochTime * 1000);
+    const hours = String(date.getHours()).padStart(2, '0');
+    const minutes = String(date.getMinutes()).padStart(2, '0');
     return `${hours}:${minutes}`;
 }

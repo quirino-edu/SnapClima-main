@@ -18,8 +18,8 @@
   <header class="header">
     <div class="header__city-search-bar">
       <input class="header__input" id="city-search-input" type="text"
-        placeholder="Temperatura de qual cidade? ou Bairro?">
-      <button class="header__button" id="city-search-button">
+        placeholder="Temperatura de qual cidade? ou Bairro?" aria-label="Buscar cidade">
+      <button class="header__button" id="city-search-button" type="button" aria-label="Buscar clima da cidade">
         <img class="header__button-icon" src="./_img/assets/search-icon.svg" alt="Ícone de uma lupa">
       </button>
     </div>
@@ -40,15 +40,15 @@
     <section class="temperature-details">
 
       <div class="temperature-details__item">
-        <div class="temperature-details__ lable">Vento</div>
+        <div class="temperature-details__label">Vento</div>
         <div class="temperature-details__value" id="wind-speed">...</div>
       </div>
       <div class="temperature-details__item">
-        <div class="temperature-details__ lable">Sensação</div>
+        <div class="temperature-details__label">Sensação</div>
         <div class="temperature-details__value" id="feels-like-temperature">...</div>
       </div>
       <div class="temperature-details__item">
-        <div class="temperature-details__ lable">Umidade</div>
+        <div class="temperature-details__label">Umidade</div>
         <div class="temperature-details__value" id="current-humidity">...</div>
       </div>
 

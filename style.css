@@ -5,6 +5,9 @@
 }
 
 body {
+    min-height: 100vh;
+    display: flex;
+    flex-direction: column;
     background-color: #f3f4fb;
     font-family: 'Inter', sans-serif;
     -webkit-font-smoothing: antialiased;
@@ -36,27 +39,41 @@ body {
     border-radius: 10px 0 0 10px;
     appearance: none;
     margin-right: -15px;
+    outline: none;
+    box-shadow: rgba(17, 24, 39, 0.08) 0px 1px 3px;
+}
+
+.header__input:focus {
+    box-shadow: 0 0 0 3px rgba(108, 92, 231, 0.15);
 }
 
 .header__button {
     display: flex;
     align-items: center;
     justify-content: center;
-
     min-width: 50px;
     min-height: 50px;
     border: none;
     border-radius: 50%;
-
     background-color: #393939;
     color: #f3f4fb;
-    transition: 0.2s;
+    transition: 0.2s ease;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 13px 27px -5px, rgba(0, 0, 0, 0.3) 0px 8px 16px -8px;
     cursor: pointer;
 }
 
 .header__button:hover {
     filter: brightness(1.25);
+}
+
+.header__button:focus-visible {
+    outline: 3px solid rgba(108, 92, 231, 0.35);
+    outline-offset: 2px;
+}
+
+.header__button-icon {
+    width: 18px;
+    height: 18px;
 }
 
 .header__current-date,
@@ -112,9 +129,8 @@ body {
 
 .bottom-container {
     background-color: #fff;
-    position: absolute;
-    bottom: 0;
     width: 100%;
+    margin-top: auto;
     border-radius: 25px 25px 0 0;
     box-shadow: rgba(50, 50, 93, 0.25) 0px 2px 5px -1px, rgba(0, 0, 0, 0.3) 0px 1px 3px -1px;
 }
@@ -156,4 +172,25 @@ body {
     flex-direction: column;
     align-items: center;
     width: 100%;
+}
+
+.sunset-sunrise__icon {
+    width: 26px;
+    height: 26px;
+    margin-bottom: 8px;
+}
+
+@media (max-width: 480px) {
+    .header {
+        padding: 0 20px;
+    }
+
+    .current-temperature__description {
+        font-size: 20px;
+    }
+
+    .temperature-details,
+    .sunset-sunrise {
+        padding: 0 10px;
+    }
 }
